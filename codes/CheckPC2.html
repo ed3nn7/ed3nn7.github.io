@@ -1,0 +1,466 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #222;
+            font-family: Arial, sans-serif;
+        }
+
+        .security-tips {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h3 {
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            perspective: 1000px;
+            height: 250px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: scale(1.03);
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 10px;
+        }
+
+        .flip-card-front {
+            background: #4A5568;
+            border-top: 4px solid #4CAF50;
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .flip-card-back {
+            background: #4CAF50;
+            color: white;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+            /* Add scroll if content is too long */
+        }
+
+        /* Consistent back layout */
+        .flip-card-back-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .back-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+
+        .tip-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .flip-card-front .tip-icon {
+            color: #4CAF50;
+        }
+
+        .flip-card-back .tip-icon {
+            color: white;
+        }
+
+        .tip-content {
+            font-size: 1.1em;
+            line-height: 1.4;
+        }
+
+        .flip-card-back h4 {
+            margin: 0 0 10px 0;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .flip-card-back ul {
+            text-align: left;
+            padding-left: 20px;
+            margin: 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .flip-card-back li {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 900px) {
+            .tips-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hold-button {
+                width: 80px;
+                height: 80px;
+            }
+
+            .hold-button-wrapper {
+                justify-content: center;
+                padding-right: 0;
+            }
+
+        }
+
+        /* Hold button styles */
+        .hold-button-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            /* Changed to right-align */
+            width: 100%;
+            margin-top: 30px;
+            padding-right: 20px;
+            /* Add some right padding */
+        }
+
+        .hold-button {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #4CAF50;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .hold-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .hold-button:active {
+            transform: scale(0.95);
+        }
+
+        .hold-button i {
+            font-size: 2em;
+            margin-bottom: 5px;
+            transform: rotate(0deg);
+            /* Arrow points right */
+        }
+
+        .hold-button-text {
+            font-size: 0.9em;
+        }
+
+        .progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            z-index: 0;
+        }
+
+        .progress-circle {
+            fill: none;
+            stroke: #388E3C;
+            stroke-width: 4;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 0.1s linear;
+            /* Slowed down */
+        }
+
+        .button-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="security-tips">
+        <h3>Real Security Tips:</h3>
+        <div class="tips-grid">
+            <!-- Card 1 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="tip-icon"><i class="fas fa-ban"></i></div>
+                        <div class="tip-content">
+                            Don't click on anything in sketchy pop-ups, not even the "X"
+                        </div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="flip-card-back-content">
+                            <div class="back-header">
+                                <div class="tip-icon"><i class="fas fa-info-circle"></i></div>
+                                <h4>Why this matters:</h4>
+                            </div>
+                            <ul>
+                                <li>Many fake "X" buttons actually trigger malware downloads</li>
+                                <li>Use Alt+F4 or Task Manager to close suspicious windows</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="tip-icon"><i class="fas fa-download"></i></div>
+                        <div class="tip-content">
+                            Never download anything a pop-up tells you to
+                        </div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="flip-card-back-content">
+                            <div class="back-header">
+                                <div class="tip-icon"><i class="fas fa-info-circle"></i></div>
+                                <h4>Safe Download Practices:</h4>
+                            </div>
+                            <ul>
+                                <li>Only download from official vendor websites</li>
+                                <li>Check file extensions (eg: .exe)</li>
+                                <li>Scan all downloads with antivirus before opening</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="tip-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="tip-content">
+                            Use your browser's built-in pop-up blocker
+                        </div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="flip-card-back-content">
+                            <div class="back-header">
+                                <div class="tip-icon"><i class="fas fa-info-circle"></i></div>
+                                <h4>Browser Protection:</h4>
+                            </div>
+                            <ul>
+                                <li>Make sure pop-up blocking and safe browsing features are turned on in your browser
+                                    settings.</li>
+                                <li>Chrome: Settings > Privacy and security > Site Settings > Pop-ups</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="tip-icon"><i class="fas fa-globe"></i></div>
+                        <div class="tip-content">
+                            Check the website URL carefully
+                        </div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="flip-card-back-content">
+                            <div class="back-header">
+                                <div class="tip-icon"><i class="fas fa-info-circle"></i></div>
+                                <h4>URL Red Flags:</h4>
+                            </div>
+                            <ul>
+                                <li>Look for HTTPS:// and padlock icon</li>
+                                <li>Watch for misspellings</li>
+                                <li>Be wary of domains ending in .xyz, .top, .gq</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="tip-icon"><i class="fas fa-sync-alt"></i></div>
+                        <div class="tip-content">
+                            Keep your antivirus and browser up to date
+                        </div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="flip-card-back-content">
+                            <div class="back-header">
+                                <div class="tip-icon"><i class="fas fa-info-circle"></i></div>
+                                <h4>Update Benefits:</h4>
+                            </div>
+                            <ul>
+                                <li>Security patches fix known vulnerabilities</li>
+                                <li>Newer versions detect more malware variants</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="tip-icon"><i class="fas fa-lock"></i></div>
+                        <div class="tip-content">
+                            Never enter personal info on pop-up pages
+                        </div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="flip-card-back-content">
+                            <div class="back-header">
+                                <div class="tip-icon"><i class="fas fa-info-circle"></i></div>
+                                <h4>Data Protection:</h4>
+                            </div>
+                            <ul>
+                                <li>Legitimate sites won't ask for credentials via pop-up</li>
+                                <li>Close the window and navigate directly to the official site</li>
+                                <li>Use password managers to avoid phishing sites</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hold button -->
+    <div class="hold-button-wrapper">
+        <button class="hold-button" id="holdButton">
+            <svg class="progress-ring" width="100" height="100">
+                <circle class="progress-circle" r="45" cx="50" cy="50"></circle>
+            </svg>
+            <div class="button-content">
+                <i class="fas fa-arrow-right"></i> <!-- Changed to right arrow -->
+                <span class="hold-button-text">HOLD</span>
+            </div>
+        </button>
+    </div>
+    </div>
+
+
+    <script>
+        const holdButton = document.getElementById('holdButton');
+        const progressCircle = document.querySelector('.progress-circle');
+        const holdTime = 3000; // Increased to 3 seconds
+        let holdTimer;
+        let progress = 0;
+
+        // Calculate circumference for progress circle
+        const radius = progressCircle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+
+        progressCircle.style.strokeDasharray = circumference;
+        progressCircle.style.strokeDashoffset = circumference;
+
+        holdButton.addEventListener('mousedown', startHold);
+        holdButton.addEventListener('touchstart', startHold);
+
+        holdButton.addEventListener('mouseup', cancelHold);
+        holdButton.addEventListener('mouseleave', cancelHold);
+        holdButton.addEventListener('touchend', cancelHold);
+
+        function startHold() {
+            // Reset progress
+            progress = 0;
+            progressCircle.style.strokeDashoffset = circumference;
+
+            // Start timer
+            holdTimer = setInterval(() => {
+                progress += 20; // Slower increment
+                const progressPercent = (progress / holdTime) * 100;
+                const offset = circumference - (progressPercent / 100) * circumference;
+                progressCircle.style.strokeDashoffset = offset;
+
+                if (progress >= holdTime) {
+                    completeHold();
+                }
+            }, 20);
+        }
+
+        function cancelHold() {
+            clearInterval(holdTimer);
+            progressCircle.style.strokeDashoffset = circumference;
+        }
+
+        function completeHold() {
+            clearInterval(holdTimer);
+            // Auto-redirect without confirmation
+            window.location.href = "QuizMAIN.html"; // Change to your actual next page
+        }
+
+
+    </script>
+
+
+</body>
+
+</html>

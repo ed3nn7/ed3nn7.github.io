@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://fmscmd.com/xdlab/imda/iframe-template.html -->
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+    <!-- change the title accordingly-->
+    <title>INTDES Interactive Storytelling</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #F0F0F0;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            overflow: hidden;
+        }
+
+        #overlay {
+            background: rgba(0, 0, 0, 0.6);
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: -100vh;
+        }
+
+        #overlay div {
+            text-align: center;
+            color: whitesmoke;
+        }
+
+        iframe {
+            width: 960px;
+            height: 540px;
+            aspect-ratio: 16/9;
+            border: none;
+            background-color: white;
+            overflow: hidden;
+
+        }
+
+        #center-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @media only screen and (min-device-width: 375px) and (orientation: portrait) {
+
+            /* show rotate overlay icon */
+            #overlay {
+                top: 0;
+            }
+        }
+
+        @media only screen and (max-width: 767px) and (orientation: landscape) {
+            #container {
+                transform: scale(.6);
+            }
+        }
+
+        iframe {
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+
+        div#backg {
+            background-image: url("../pics/homepage.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Popup Styling */
+        .popup {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 300px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .popup-content {
+            padding: 15px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: red;
+        }
+
+        /* Optional: Trigger button styling */
+        #popup-trigger {
+            padding: 10px 15px;
+            background: brown;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="text-center">
+        <div id="backg">
+            <div id="container">
+
+                <div><svg fill="#ffffff" width="150" height="150" version="1.1" id="Capa_1"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 214.367 214.367" xml:space="preserve">
+                        <!-- <path d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
+           c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
+           c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
+           S202.403,42.716,202.403,95.22z"></path> -->
+                    </svg>
+                </div>
+            </div>
+            <!-- rename your homepage or update the src below -->
+            <div id="container">
+                <div id="center-container"><iframe src="Index.html"></iframe></div>
+
+            </div>
+        </div>
+
+</body>
+
+</html>

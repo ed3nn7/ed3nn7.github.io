@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Question 10</title>
+    <style>
+        body {
+            background: black;
+            color: red;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 960px;
+            height: 540px;
+        }
+
+        #quiz-container {
+            width: 840px;
+            height: 100%;
+            padding: 10px 70px 10px 20px;
+            position: relative;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        #points-container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.1);
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 15px;
+            box-sizing: border-box;
+        }
+
+        #points-label {
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: center;
+        }
+
+        #points-value {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        #points-bar {
+            width: 30px;
+            height: calc(100% - 120px);
+            background: rgba(255, 0, 0, 0.1);
+            position: relative;
+        }
+
+        #points-progress {
+            width: 100%;
+            height: 0%;
+            background: red;
+            position: absolute;
+            bottom: 0;
+            transition: height 0.5s;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .option {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid red;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+
+        .option:hover {
+            background: rgba(255, 0, 0, 0.2);
+        }
+
+        #confirm-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #confirm-box {
+            background: black;
+            padding: 20px;
+            border: 2px solid red;
+            max-width: 80%;
+            text-align: center;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .confirm-btn {
+            background: rgba(255, 0, 0, 0.3);
+            color: red;
+            border: 1px solid red;
+            padding: 8px 15px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            outline: none;
+            min-width: 80px;
+            font-size: 0.9em;
+        }
+
+        .confirm-btn:hover {
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        #feedback-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 200;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .feedback-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .feedback-message {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .explanation-container {
+            width: 100%;
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .explanation-box {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 15px;
+            border: 1px solid red;
+            transform: translateY(100px);
+            opacity: 0;
+            animation: slideUp 0.5s forwards;
+            animation-delay: calc(var(--order) * 0.1s);
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: red;
+            font-size: 0.95em;
+        }
+
+        .explanation-text {
+            color: red;
+            font-size: 0.9em;
+        }
+
+        .explanation-correct {
+            border-color: #00FF00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .explanation-title-correct {
+            color: #00FF00 !important;
+        }
+
+        .explanation-text-correct {
+            color: #00FF00 !important;
+        }
+
+        #next-button {
+            position: fixed;
+            bottom: 15px;
+            right: 70px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            z-index: 300;
+        }
+
+        #next-arrow {
+            font-size: 1.5em;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(3px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        #next-text {
+            margin-top: 3px;
+            font-size: 0.7em;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <!-- Points Bar -->
+    <div id="points-container">
+        <div id="points-label">POINTS</div>
+        <div id="points-value">0</div>
+        <div id="points-bar">
+            <div id="points-progress"></div>
+        </div>
+    </div>
+
+    <div id="quiz-container">
+        <h1>Question 10</h1>
+        <div class="question-text">
+            After a cyberattack, what should you do about your online accounts?
+        </div>
+
+        <div class="option" onclick="selectOption(0)">A. Wait to see if anything strange happens</div>
+        <div class="option" onclick="selectOption(1)">B. Change all passwords and enable 2FA</div>
+        <div class="option" onclick="selectOption(2)">C. Sign out and back in</div>
+        <div class="option" onclick="selectOption(3)">D. Update your profile pictures</div>
+    </div>
+
+    <!-- Confirmation Screen -->
+    <div id="confirm-screen">
+        <div id="confirm-box">
+            <h2>CONFIRM YOUR ANSWER</h2>
+            <p>You selected: <span id="selected-answer"></span></p>
+            <p>Are you sure this is your final answer?</p>
+            <div class="confirm-buttons">
+                <button class="confirm-btn" onclick="confirmAnswer()">CONFIRM</button>
+                <button class="confirm-btn" onclick="cancelConfirm()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Overlay -->
+    <div id="feedback-overlay">
+        <div class="feedback-icon" id="feedback-icon"></div>
+        <div class="feedback-message" id="feedback-message"></div>
+
+        <div class="explanation-container" id="explanation-container"></div>
+    </div>
+
+    <!-- Next Button -->
+    <div id="next-button" onclick="nextQuestion()">
+        <div id="next-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div id="next-text">NEXT QUESTION</div>
+    </div>
+
+    <script>
+        let selectedOption = null;
+        const correctAnswer = 1;
+        const totalQuestions = 10;
+
+        const explanations = [
+            {
+                option: "A. Wait to see if anything strange happens",
+                text: "Delaying action risks further damage.",
+                correct: false
+            },
+            {
+                option: "B. Change all passwords and enable 2FA",
+                text: "CORRECT: Compromised accounts must be secured immediately. 2FA adds an extra layer of security.",
+                correct: true
+            },
+            {
+                option: "C. Sign out and back in",
+                text: "Signing in again could expose you to more risk.",
+                correct: false
+            },
+            {
+                option: "D. Update your profile pictures",
+                text: "Profile pictures don’t secure your account.",
+                correct: false
+            }
+        ];
+
+        function initPoints() {
+            if (!localStorage.getItem('quizScore')) {
+                localStorage.setItem('quizScore', '0');
+            }
+            if (!localStorage.getItem('currentQuestion')) {
+                localStorage.setItem('currentQuestion', '1');
+            }
+            updatePointsDisplay();
+        }
+
+        function updatePointsDisplay() {
+            const currentScore = parseInt(localStorage.getItem('quizScore'));
+            document.getElementById('points-value').textContent = currentScore;
+            const progress = (currentScore / (totalQuestions * 100)) * 100;
+            document.getElementById('points-progress').style.height = `${progress}%`;
+        }
+
+        function selectOption(optionIndex) {
+            selectedOption = optionIndex;
+            document.getElementById('selected-answer').textContent =
+                document.querySelectorAll('.option')[optionIndex].textContent;
+            document.getElementById('confirm-screen').style.display = 'flex';
+        }
+
+        function confirmAnswer() {
+            document.getElementById('confirm-screen').style.display = 'none';
+            showFeedback();
+        }
+
+        function cancelConfirm() {
+            document.getElementById('confirm-screen').style.display = 'none';
+            selectedOption = null;
+        }
+
+        function showFeedback() {
+            const isCorrect = selectedOption === correctAnswer;
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackMessage = document.getElementById('feedback-message');
+
+            feedbackIcon.innerHTML = isCorrect ? '✅' : '❌';
+            feedbackMessage.textContent = isCorrect ? "CORRECT!" : "INCORRECT";
+            feedbackMessage.style.color = isCorrect ? "#00FF00" : "red";
+
+            const container = document.getElementById('explanation-container');
+            container.innerHTML = '';
+
+            explanations.forEach((exp, index) => {
+                const box = document.createElement('div');
+                box.className = `explanation-box ${exp.correct ? 'explanation-correct' : ''}`;
+                box.style.setProperty('--order', index);
+
+                const title = document.createElement('div');
+                title.className = `explanation-title ${exp.correct ? 'explanation-title-correct' : ''}`;
+                title.textContent = exp.option;
+
+                const text = document.createElement('div');
+                text.className = `explanation-text ${exp.correct ? 'explanation-text-correct' : ''}`;
+                text.textContent = exp.text;
+
+                box.appendChild(title);
+                box.appendChild(text);
+                container.appendChild(box);
+            });
+
+            document.getElementById('feedback-overlay').style.display = 'flex';
+
+            setTimeout(() => {
+                document.getElementById('next-button').style.display = 'flex';
+            }, 1000);
+
+            if (isCorrect) {
+                const currentScore = parseInt(localStorage.getItem('quizScore'));
+                localStorage.setItem('quizScore', (currentScore + 100).toString());
+                updatePointsDisplay();
+            }
+        }
+
+        function nextQuestion() {
+            const nextQuestion = parseInt(localStorage.getItem('currentQuestion')) + 1;
+            localStorage.setItem('currentQuestion', nextQuestion.toString());
+            window.location.href = "QuizLeaderboard.html";
+        }
+
+        window.onload = initPoints;
+    </script>
+</body>
+
+</html>

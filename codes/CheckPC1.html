@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CheckPC1</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: black;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            font-size: 4em;
+            color: #4CAF50;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        h2 {
+            color: #4CAF50;
+            font-weight: normal;
+            margin-top: 0;
+        }
+
+        p {
+            font-size: 1.8em;
+            color: #4CAF50;
+            margin: 20px 0 40px;
+        }
+
+        .confetti {
+            position: fixed;
+            top: -10px;
+            /* Start above the viewport */
+            width: 10px;
+            height: 10px;
+            opacity: 1;
+            /* Start fully visible */
+            animation: confetti-fall 5s linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .charge-container {
+            margin: 40px auto;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .charge-icon {
+            font-size: 3em;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .charge-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .charge-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            transition: width 0.1s linear;
+        }
+
+        .charge-text {
+            font-size: 1.2em;
+            color: #4CAF50;
+            margin-top: 10px;
+        }
+
+        .charging .charge-icon {
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="congrats-container">
+        <h1>CONGRATULATIONS!</h1>
+        <h2>You made the right choice!</h2>
+
+        <p>By choosing not to download suspicious software, you've protected your device from potential threats.</p>
+
+        <div class="charge-container">
+            <div class="charge-icon">✓</div>
+            <div class="charge-bar">
+                <div class="charge-progress"></div>
+            </div>
+            <p class="charge-text">Hold SPACEBAR to verify your security</p>
+        </div>
+    </div>
+
+    <script>
+        // Create confetti
+        function createConfetti() {
+            const colors = ['#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107'];
+
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+
+                // Random properties
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                confetti.style.animationDuration = Math.random() * 3 + 3 + 's';
+
+                document.body.appendChild(confetti);
+            }
+        }
+
+        // Start confetti when page loads
+        window.onload = function () {
+            createConfetti();
+
+            // Keep adding more confetti every 3 seconds
+            setInterval(createConfetti, 3000);
+        };
+
+        function createConfetti() {
+            const colors = ['#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107'];
+
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+
+                // Random properties
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px'; // Start above viewport
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's'; // 2-5s duration
+
+                document.body.appendChild(confetti);
+            }
+        }
+
+        // Spacebar charging system
+        let chargeInterval;
+        let chargeWidth = 0;
+        const progressBar = document.querySelector('.charge-progress');
+        const chargeText = document.querySelector('.charge-text');
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && chargeWidth < 100) {
+                e.preventDefault(); // Prevent page scrolling
+                document.body.classList.add('charging');
+
+                chargeInterval = setInterval(() => {
+                    chargeWidth += 1;
+                    progressBar.style.width = `${chargeWidth}%`;
+
+                    if (chargeWidth >= 100) {
+                        clearInterval(chargeInterval);
+                        chargeText.textContent = "✓ Security Verified!";
+                        document.body.classList.remove('charging');
+
+                        // Redirect after 1.5 seconds
+                        setTimeout(() => {
+                            window.location.href = "CheckPC2.html";
+                        }, 1500);
+                    }
+                }, 20); // Faster charging (lower number = faster)
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space' && chargeWidth < 100) {
+                clearInterval(chargeInterval);
+                document.body.classList.remove('charging');
+                chargeWidth = 0;
+                progressBar.style.width = '0%';
+                chargeText.textContent = "Hold SPACEBAR to verify your security";
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                clearInterval(chargeInterval);
+                document.body.classList.remove('charging');
+
+                if (chargeWidth < 100) {
+                    chargeWidth = 0;
+                    document.querySelector('.charge-progress').style.width = '0%';
+                    document.querySelector('.charge-text').textContent = "Hold SPACEBAR to verify your security";
+                }
+            }
+        });
+        // ===== ADD THIS NEW FUNCTION =====
+        function setupChargeBar() {
+            let chargeInterval;
+            let chargeWidth = 0;
+            const progressBar = document.querySelector('.charge-progress');
+            const chargeText = document.querySelector('.charge-text');
+
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && chargeWidth < 100) {
+                    e.preventDefault();
+                    document.body.classList.add('charging');
+
+                    chargeInterval = setInterval(() => {
+                        chargeWidth += 1;
+                        progressBar.style.width = `${chargeWidth}%`;
+
+                        // When fully charged
+                        if (chargeWidth >= 100) {
+                            clearInterval(chargeInterval);
+                            chargeText.textContent = "✓ Security Verified!";
+                            document.body.classList.remove('charging');
+
+                            // Trigger extra confetti burst
+                            for (let i = 0; i < 300; i++) {
+                                setTimeout(() => createConfetti(), i * 10);
+                            }
+
+                            // Redirect after 2 seconds
+                            setTimeout(() => {
+                                window.location.href = "CheckPC2.html"; // CHANGE THIS TO YOUR TARGET PAGE
+                            }, 2000);
+                        }
+                    }, 30);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
